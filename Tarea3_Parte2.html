@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <label for="factura">Numero de Factura</label>
+    <br />
+    <input type="text" name="factura" id="fact" />
+    <br />
+    <label for="Cedula">Cedula</label>
+    <br />
+    <input type="number" name="cedula" id="ced" />
+    <br />
+    <label for="nombre">Nombre</label>
+    <br />
+    <input type="text" name="nombre" id="nom" />
+    <br />
+    <label for="localidad">Localidad</label>
+    <br />
+    <select name="localidad" id="loc">
+        <option value="">Select...</option>
+        <option value="1">Sol: Norte/Sure</option>
+        <option value="2">Sombra: Este/Oeste</option>
+        <option value="3">Preferencial</option>
+    </select>
+    <br />
+    <label for="cantidad">Cantidad de Entradas</label>
+    <br />
+    <input type="text" name="cantidad" id="canti" />
+    <br />
+
+    <button id="processButton" onclick="process()">Process</button>
+    <button onclick="print()">Print</button>
+    <br />
+
+    <dv id="Resultado"></dv>
+    <dv id="Estadisticas"></dv>
+
+    <script>
+        var datos = [];
+
+        var n = window.prompt("ingrese la cantidad de veces que ingresara datos");
+
+        var estadistica = {
+            Entradas_Sol: { cantidad: 0, acumulado: 0 },
+            Entradas_Sombra: { cantidad: 0, acumulado: 0 },
+            Entradas_Prefencial: { cantidad: 0, acumulado: 0 },
+        };
+
+        function process() {
+
+            var data = {
+                numero_Factura: document.getElementById("fact").value,
+                cedula: document.getElementById("ced").value,
+                nombre: document.getElementById("nom").value,
+                localidad: parseInt(document.getElementById("loc").value),
+                Cantidad_Entradas: document.getElementById("canti").value,
+                subtotal: 0,
+                cargo: 0,
+                total: 0.0,
+            };
+
+            switch (data.localidad) {
+                case 1:
+                    var precio = 10500;
+                    var localizacion = "Sola Norte/Sur";
+                    var subtotal = data.Cantidad_Entradas * precio;
+                    var cargo = 1000 * data.Cantidad_Entradas;
+                    var total = subtotal + cargo;
+                    break;
+
+                case 2:
+                    var precio = 20500;
+                    var localizacion = "Sombre Este/Oeste";
+                    var subtotal = data.Cantidad_Entradas * precio;
+                    var cargo = 1000 * data.Cantidad_Entradas;
+                    var total = subtotal + cargo;
+                    break;
+
+                case 3:
+                    var precio = 25500;
+                    var localizacion = "Prefencial";
+                    var subtotal = data.Cantidad_Entradas * precio;
+                    var cargo = 1000 * data.Cantidad_Entradas;
+                    var total = subtotal + cargo;
+                    break;
+
+                default:
+                    alert("Localidad no valida");
+            }
+
+            data.subtotal = subtotal;
+            data.cargo = cargo;
+            data.total = total;
+
+            datos.push(data);
+
+            if (datos.length == n) {
+                document.getElementById("processButton").disabled = true;
+                print_statistics();
+                print();
+            }
+        }
+
+        function print() {
+            var result = "";
+            for (let i = 0; i < datos.length; i++) {
+                result += `
+                    <h2>Datos Ingresados</h2>
+                    <p><strong>Numero de Factura:</strong> ${datos[i].numero_Factura}</p>
+                    <p><strong>Cedula:</strong> ${datos[i].cedula}</p>
+                    <p><strong> Nombre del comprador:</strong> ${datos[i].nombre}</p>
+                    <p><strong>Localidad</strong> ${datos[i].localidad}</p>
+                    <p><strong>Cantidad de Entradas: </strong> ${datos[i].Cantidad_Entradas}</p>
+                    <p><strong>Subtotal: </strong> ${datos[i].subtotal}</p>
+                    <p><strong>Cargo por Servicios: </strong> ${datos[i].cargo}</p>
+                    <p><strong>Total a Pagar: </strong> ${datos[i].total}</p>
+                    <hr>
+                `;
+            }
+            document.getElementById("Resultado").innerHTML = result;
+        }
+
+        
+        function calculate_statistics() {
+    for (let i = 0; i < datos.length; i++) {
+        switch (datos[i].localidad) {
+            case 1:
+                estadistica.Entradas_Sol.cantidad++;
+                estadistica.Entradas_Sol.acumulado += parseInt(datos[i].total);
+                break;
+            case 2:
+                estadistica.Entradas_Sombra.cantidad++;
+                estadistica.Entradas_Sombra.acumulado += parseInt(datos[i].total);
+                break;
+            case 3:
+                estadistica.Entradas_Prefencial.cantidad++;
+                estadistica.Entradas_Prefencial.acumulado += parseInt(datos[i].total);
+                break;
+            default:
+                
+        }
+    }
+}
+
+        function print_statistics() {
+            
+            calculate_statistics();
+            var result = `
+                <h2>Estadisticas</h2>
+                <p><strong>Entradas Sol:</strong> ${estadistica.Entradas_Sol.cantidad}</p>
+                <p><strong>Acumulado Sol:</strong> ${estadistica.Entradas_Sol.acumulado}</p>
+                <p><strong>Entradas Sombra:</strong> ${estadistica.Entradas_Sombra.cantidad}</p>
+                <p><strong>Acumulado Sombra:</strong> ${estadistica.Entradas_Sombra.acumulado}</p>
+                <p><strong>Entradas Preferencial:</strong> ${estadistica.Entradas_Prefencial.cantidad}</p>
+                <p><strong>Acumulado Preferencial:</strong> ${estadistica.Entradas_Prefencial.acumulado}</p>
+
+            `;
+            document.getElementById("Estadisticas").innerHTML = result;
+        }
+
+    </script>
+</body>
+
+</html>
